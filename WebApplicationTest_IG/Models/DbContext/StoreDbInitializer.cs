@@ -10,16 +10,75 @@ namespace WebApplicationTest_IG.Models
     {
         protected override void Seed(StoreContext db)
         {
-            #region Params for init DB
-            //Random rnd = new Random();
-            //const int ProductsQuantity = 5000; //Колличество товаров
-            //const int ClientsQuantity = 100;  //Колличество генерирууемых клиентов
-            //const int minOrders = 5; //мин. кол. заказов на клиента
-            //const int maxOrders = 50;//макс.кол. заказов на клиента
-            //const int minProductsQuant = 1;  //мин. кол. товаров в заказе
-            //const int maxProductsQuant = 100;//макс.кол. товаров в заказе
+            #region add triggers
+            var addInsertTrigger = db.Database.ExecuteSqlCommand("CREATE TRIGGER SetClientsStatusForInsert " +
+                "ON Orders " +
+                "FOR INSERT " +
+                "AS " +
+                "DECLARE @clientId int;" +
+                "DECLARE @quantity int;" +
+                "DECLARE @ordinaryStatus nvarchar(10); " +
+                "DECLARE @averageStatus nvarchar(10); " +
+                "DECLARE @topStatus nvarchar(10);" +
+                "DECLARE @VIPStatus nvarchar(10);" +
+                "SET @ordinaryStatus = (N'Обычный');" +
+                "SET @averageStatus = (N'Средний');" +
+                "SET @topStatus = (N'Топ');" +
+                "SET @VIPStatus = (N'ВИП');" +
+                "SELECT @clientId = ClientId  FROM inserted;" +
+                "SELECT @quantity = Count(*)  FROM Orders WHERE ClientId = @clientId;" +
+                "IF(@quantity <= 5) " +
+                "BEGIN " +
+                "   UPDATE Clients SET Category = @ordinaryStatus WHERE ClientId = @clientId; " +
+                "END " +
+                "IF(@quantity > 5 AND @quantity <= 30) " +
+                "BEGIN " +
+                "   UPDATE Clients SET Category = @averageStatus WHERE ClientId = @clientId;" +
+                "END " +
+                "IF(@quantity > 30 AND @quantity <= 40) " +
+                "BEGIN " +
+                "   UPDATE Clients SET Category = @topStatus WHERE ClientId = @clientId;" +
+                "END " +
+                "IF(@quantity > 40) " +
+                "BEGIN " +
+                "   UPDATE Clients SET Category = @VIPStatus WHERE ClientId = @clientId;" +
+                "END ");
+
+            var addDelTrigger = db.Database.ExecuteSqlCommand("CREATE TRIGGER SetClientsStatusForDelete " +
+                "ON Orders " +
+                "FOR DELETE " +
+                "AS " +
+                "DECLARE @clientId int;" +
+                "DECLARE @quantity int;" +
+                "DECLARE @ordinaryStatus nvarchar(10); " +
+                "DECLARE @averageStatus nvarchar(10); " +
+                "DECLARE @topStatus nvarchar(10);" +
+                "DECLARE @VIPStatus nvarchar(10);" +
+                "SET @ordinaryStatus = (N'Обычный');" +
+                "SET @averageStatus = (N'Средний');" +
+                "SET @topStatus = (N'Топ');" +
+                "SET @VIPStatus = (N'ВИП');" +
+                "SELECT @clientId = ClientId  FROM deleted;" +
+                "SELECT @quantity = Count(*)  FROM Orders WHERE ClientId = @clientId;" +
+                "IF(@quantity <= 5) " +
+                "BEGIN " +
+                "   UPDATE Clients SET Category = @ordinaryStatus WHERE ClientId = @clientId; " +
+                "END " +
+                "IF(@quantity > 5 AND @quantity <= 30) " +
+                "BEGIN " +
+                "   UPDATE Clients SET Category = @averageStatus WHERE ClientId = @clientId;" +
+                "END " +
+                "IF(@quantity > 30 AND @quantity <= 40) " +
+                "BEGIN " +
+                "   UPDATE Clients SET Category = @topStatus WHERE ClientId = @clientId;" +
+                "END " +
+                "IF(@quantity > 40) " +
+                "BEGIN " +
+                "   UPDATE Clients SET Category = @VIPStatus WHERE ClientId = @clientId;" +
+                "END ");
             #endregion
 
+            #region  generate Stored Procedure 
             var createStoredProcedure = db.Database.ExecuteSqlCommand(
                 "CREATE PROCEDURE [dbo].[Database_Init] "
                 + "AS "
@@ -81,7 +140,7 @@ namespace WebApplicationTest_IG.Models
                 +   "WHILE @currentOrderNumber <= @CurrentOrderQuantity "
                 +   "BEGIN "
                 +       "INSERT INTO Orders(ClientId, Date) VALUES(@currentClientId, GETDATE());"
-                +       "SET @currentOrderId = (SELECT IDENT_CURRENT('Clients'));"
+                +       "SET @currentOrderId = (SELECT IDENT_CURRENT('Orders'));"
                 +       "SET @CurrentOrderRowsQuantity = FLOOR(RAND() * (@maxOrderRows) + 1);"
                 +       "SET @currentOrderRowNumber = 1;"
                 +       "WHILE @currentOrderRowNumber <= @CurrentOrderRowsQuantity "
@@ -98,9 +157,7 @@ namespace WebApplicationTest_IG.Models
                 +   "END "
                 +   "SET @counter = @counter + 1;"
                 + "END;");
-
-
-            //var createProcProdInsert = db.Database.ExecuteSqlCommand("CREATE PROCEDURE [dbo].[Database_Init] AS DECLARE @name nvarchar(50); DECLARE @from int; DECLARE @productQuantity int; DELETE FROM Products; SET @name = (N'Товар '); SET @from = 1; SET @productQuantity = 5000;   WHILE @from <= @productQuantity  BEGIN  INSERT INTO[dbo].[Products]([Name]) VALUES(@Name + CAST(@from as nvarchar(5))) SET @from = @from + 1;  END;");
+#endregion
             var insertProducts = db.Database.ExecuteSqlCommand("DECLARE @RC int; EXECUTE @RC = [dbo].[Database_Init];");
                        
             base.Seed(db);
@@ -109,33 +166,3 @@ namespace WebApplicationTest_IG.Models
     }
 }
 
-/*
-var orId = SessionDbProvider.Current.OrganizationID;
-string query = "select US.Name as Employee " +
-    ", US.ID as EmployeeID " +
-    ", SUM(PO.Payed) as Payed " +
-    ", SUM(PO.Profit) as Profit " +
-    ", SUM(PO.CountTicked) as CountTicked " +
-    ", AVG(PO.AverageTicked) as AverageTicked " +
-    ", SUM(PO.AverageTime) as AverageTime " +
-    " from " +
-    " (select PO.EmployeeID as Employeer " +
-    ", PO.Payment as Payed " +
-    ", 0.0 as Profit " +
-    ", 1 as CountTicked " +
-    ", PO.Payment as AverageTicked " +
-    ", 0.0 as AverageTime " +
-    " from dbo.ProductOperations as PO " +
-    " where PO.IsDeleted = 'False' AND PO.OperationType = 0 AND PO.OrganizationID = @orgID AND PO.Date >= @dateFrom AND PO.Date < @dateTo ) as PO " +
-    "  left join dbo.Users as US on PO.Employeer = US.ID " +
-    " where <UsName> " +
-    " GROUP BY US.Name, US.ID ";
-query = query.Replace("<UsName>", string.IsNullOrEmpty(name) ? "1=1" : "US.Name Like @name ");
-                result = dbL.Database.SqlQuery<ListStatisticEmployeer>(
-                    query
-                    , new SqlParameter("orgID", orId)
-                    , new SqlParameter("name", "%" + name + "%")
-                    , new SqlParameter("dateFrom", GetDateFrom(dateFrom))
-                    , new SqlParameter("dateTo", GetDateTo(dateTo))
-                    ).ToList();
-                    */

@@ -201,6 +201,8 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\SQL_Scrips\dbo.Procedure.sql" />
     <Content Include="Scripts\SQL_Scrips\dbo.ProcedureCreateAndInitAllDB.sql" />
+    <Content Include="Scripts\SQL_Scrips\TriggerDeleted.sql" />
+    <Content Include="Scripts\SQL_Scrips\TriggerInsert.sql" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -76,3 +76,4 @@ _[Ss]cripts
 .vs/config/
 WebApplicationTest_IG/App_Data/IGStore_log.ldf
 WebApplicationTest_IG/App_Data/IGStore.mdf
+.vs/WebApplicationTest_IG/v15/sqlite3/storage.ide
