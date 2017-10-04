@@ -13,7 +13,7 @@ namespace WebApplicationTest_IG.Controllers
 
         public ActionResult Index()
         {
-            IEnumerable<Client> clients = db.Clients.OrderBy(Client => Client.Name);
+            IEnumerable<Client> clients = db.Clients.OrderBy(i => i.ClientId);
             ViewBag.Clients = clients;
             return View();
         }

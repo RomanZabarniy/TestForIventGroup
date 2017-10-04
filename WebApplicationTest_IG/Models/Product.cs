@@ -6,7 +6,7 @@ namespace WebApplicationTest_IG.Models
     {
         //[Key]
         public int ProductId { get; set; }
-       // [MaxLength(50)]
+        //[MaxLength(50)]
         public string Name { get; set; }
     }
 }
