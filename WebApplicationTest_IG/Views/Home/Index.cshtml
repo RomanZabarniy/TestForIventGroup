@@ -10,16 +10,15 @@
             <tr>
                 <td><p>Имя</p></td>
                 <td><p>Адрес</p></td>
-                <td><p>Категория</p></td>
+                <td><p>Сумма по заказам</p></td>
                 <td></td>
             </tr>
             @foreach (var с in ViewBag.Clients)
             {
                 <tr>
-                    <td><p>@с.Name</p></td>
+                    <td><p><a href="/Home/Orders/@с.ClientId"> @с.Name</a></p></td>
                     <td><p>@с.Adress</p></td>
-                    <td><p>@с.Category</p></td>
-                    @*<td><p><a href="/Home/Buy/@с.Id">Купить</a></p></td>*@
+                    <td><p>@с.SumOrders</p></td>
                 </tr>
             }
         </table>

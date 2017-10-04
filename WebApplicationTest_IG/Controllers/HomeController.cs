@@ -13,7 +13,40 @@ namespace WebApplicationTest_IG.Controllers
 
         public ActionResult Index()
         {
-            IEnumerable<Client> clients = db.Clients.OrderBy(i => i.ClientId);
+            //IEnumerable<Client> clients = db.Clients.OrderBy(i => i.ClientId);
+            IEnumerable<ClientModel> clients = (from c in db.Clients
+                                                join ord in db.Orders on c.ClientId equals ord.ClientId
+                                                let sum = Math.Round(db.OrderRows.Where(x => (x.OrderId  == ord.OrderId )).Sum(x => x.Sum), 2)
+                                                group c by new {
+                                                    c.Name,
+                                                    c.Adress,
+                                                    c.ClientId,
+                                                    sum
+                                                } into clt
+                                                orderby clt.Key.ClientId
+                                                select new ClientModel()
+                                                {
+                                                    ClientId = clt.Key.ClientId,
+                                                    Name = clt.Key.Name,
+                                                    Adress = clt.Key.Adress,
+                                                    SumOrders = clt.Key.sum
+                                                }
+                           ).ToList();
+           //var cl = (from c in clients
+           //                      group c by new
+           //                      {
+           //                          c.ClientId,
+           //                          c.Adress,
+           //                          c.Name,
+           //                      } into cl
+           //                      let summ = cl.Sum(x => x.SumOrders)
+           //                      select new 
+           //                      {
+           //                          cl = cl.Key,
+           //                          summ = summ 
+           //                      }
+           //                ).ToList();
+
             ViewBag.Clients = clients;
             return View();
         }
