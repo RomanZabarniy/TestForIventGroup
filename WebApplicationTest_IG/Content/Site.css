@@ -22,32 +22,37 @@ select,
 textarea {
     max-width: 280px;
 }
+
 p {
-    text-indent:20px;
+    text-indent: 20px;
 }
 
+/*____________счетчик строк для таблицы___________{{{*/
 .counter {
     border-collapse: collapse;
     counter-reset: schetchik;
 }
+
 .counter tr {
     counter-increment: schetchik; /* при встрече тега tr счётчик с названием "schetchik" увеличивается на единицу */
 }
 
-    .counter td,
-    .counter tr:before {
-        padding: .1em .5em;
-        border: 1px solid rgba(166, 183, 182, 0.50);
-    }
+.counter td,
+.counter tr:before {
+    padding: .1em .5em;
+    border: 1px solid rgba(166, 183, 182, 0.50);
+}
 
-    .counter tr:before {
-        content: counter(schetchik); /* значение счётчика с названием "schetchik" записывается в первую клетку строки */
-        display: table-cell;
-        vertical-align: middle;
-        color: #978777;
-    }
-    .counter tbody tr:before,
-    .counter b:after {
-        content: counter(schetchik);
-        color: #978777;
-    }
+.counter tr:before {
+    content: counter(schetchik); /* значение счётчика с названием "schetchik" записывается в первую клетку строки */
+    display: table-cell;
+    vertical-align: middle;
+    color: #978777;
+}
+
+.counter tbody tr:before,
+.counter b:after {
+    content: counter(schetchik);
+    color: #978777;
+}
+/*------------------------------------------}}}-*/

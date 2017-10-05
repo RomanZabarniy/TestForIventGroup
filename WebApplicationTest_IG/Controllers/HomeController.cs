@@ -15,6 +15,7 @@ namespace WebApplicationTest_IG.Controllers
         {
            StoreContext db = new StoreContext();
 
+           // собираем список клиентов для первой страницы
            IEnumerable <ClientModel> clients = (from c in db.Clients
                        join o in db.Orders on c.ClientId equals o.ClientId
                        join or in db.OrderRows on o.OrderId equals or.OrderRowId
@@ -23,7 +24,7 @@ namespace WebApplicationTest_IG.Controllers
                            c.Name,
                            c.Adress,
                        } into clts
-                       let sumBycl = clts.Sum(x => x.Sum)
+                       let sumBycl = Math.Round(clts.Sum(x => x.Sum),2)
                        select new ClientModel
                        {
                             ClientId = clts.Key.ClientId,
@@ -32,7 +33,6 @@ namespace WebApplicationTest_IG.Controllers
                             SumOrders = sumBycl 
                        }                                   
                        ).ToList();
-            //DataView view = new DataView(db.Clients);3
             ViewBag.Clients = clients;
             return View();
         }
@@ -43,6 +43,25 @@ namespace WebApplicationTest_IG.Controllers
         }
         public ActionResult Statistic()
         {
+            StoreContext db = new StoreContext();
+            
+            
+            IEnumerable<StatisticModel> stat = (from c in db.Clients
+                                                join o in db.Orders on c.ClientId equals o.ClientId
+                                                join or in db.OrderRows on o.OrderId equals or.OrderRowId
+                                                group or by new {
+                                                    c.Category,
+                                                    clQant = db.Clients.Where(x => x.Category == c.Category ).Count() 
+                                                }  into cat
+                                                let sumByCat = Math.Round(cat.Sum(x => x.Sum),2)
+                                                orderby sumByCat
+                                                select new StatisticModel {
+                                                   Category = cat.Key.Category,
+                                                   SumByClientOrders = sumByCat,
+                                                   ClientsByCatQuantity =  cat.Key.clQant
+                                               }
+                                                ).ToList();
+            ViewBag.StatByCategories = stat;
             return View();
         }
 

@@ -3,5 +3,27 @@
     ViewBag.Title = "Статистика";
 }
 
-<h2>Статистика</h2>
+<h3>Статистика</h3>
+<table width="750">
+    <thead>
+        <tr>
+            <td><p>№</p></td>
+            <td class="col-md-5"><p>Категория</p></td>
+            <td class="col-md-4"><p>Количество клиентов</p></td>
+            <td class="col-md-3"><p>Сумма по заказам</p></td>
+        </tr>
+    </thead>
+    <tbody class="counter">
+        @foreach (var c in ViewBag.StatByCategories)
+        {
+            <tr>
+                <td class="col-md-5"><p> @c.Category</p></td>
+                <td class="col-md-4"><p>@c.ClientsByCatQuantity</p></td>
+                <td class="col-md-3"><p>@c.SumByClientOrders</p></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
 
