@@ -6,21 +6,25 @@
 <div class="row">
     <div class="col-md-12">
         <h3>Список клиентов</h3>
-        <table>
-            <tr>
-                <td><p>Имя</p></td>
-                <td><p>Адрес</p></td>
-                <td><p>Сумма по заказам</p></td>
-                <td></td>
-            </tr>
-            @foreach (var с in ViewBag.Clients)
-            {
+        <table width="700">
+            <thead>
                 <tr>
-                    <td><p><a href="/Home/Orders/@с.ClientId"> @с.Name</a></p></td>
-                    <td><p>@с.Adress</p></td>
-                    <td><p>@с.SumOrders</p></td>
+                    <td><p>№</p></td>
+                    <td class="col-md-5"><p>Имя</p></td>
+                    <td class="col-md-4"><p>Адрес</p></td>
+                    <td class="col-md-3"><p>Сумма по заказам</p></td>
                 </tr>
-            }
+            </thead>
+            <tbody class="counter">
+                @foreach (var с in ViewBag.Clients)
+                {
+                    <tr>
+                        <td class="col-md-5"><p><a href="/Home/Orders/@с.ClientId"> @с.Name</a></p></td>
+                        <td class="col-md-4"><p>@с.Adress</p></td>
+                        <td class="col-md-3"><p>@с.SumOrders</p></td>
+                    </tr>
+                }
+            </tbody>
         </table>
     </div>
 </div>

@@ -5,10 +5,11 @@ namespace WebApplicationTest_IG.Models
 {
     public class Client
     {
-        //[Key]
+        [Key]
         public int ClientId { get; set; }
-        //[MaxLength(50)]
+        [MaxLength(50)]
         public string Name { get; set; }
+        //[MaxLength(50)]
         public string Adress { get; set; }
         public string Category { get; set; }
     }

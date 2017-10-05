@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -9,47 +10,33 @@ namespace WebApplicationTest_IG.Controllers
 {
     public class HomeController : Controller
     {
-        StoreContext db = new StoreContext();
 
         public ActionResult Index()
         {
-            //IEnumerable<Client> clients = db.Clients.OrderBy(i => i.ClientId);
-            IEnumerable<ClientModel> clients = (from c in db.Clients
-                                                join ord in db.Orders on c.ClientId equals ord.ClientId
-                                                let sum = Math.Round(db.OrderRows.Where(x => (x.OrderId  == ord.OrderId )).Sum(x => x.Sum), 2)
-                                                group c by new {
-                                                    c.Name,
-                                                    c.Adress,
-                                                    c.ClientId,
-                                                    sum
-                                                } into clt
-                                                orderby clt.Key.ClientId
-                                                select new ClientModel()
-                                                {
-                                                    ClientId = clt.Key.ClientId,
-                                                    Name = clt.Key.Name,
-                                                    Adress = clt.Key.Adress,
-                                                    SumOrders = clt.Key.sum
-                                                }
-                           ).ToList();
-           //var cl = (from c in clients
-           //                      group c by new
-           //                      {
-           //                          c.ClientId,
-           //                          c.Adress,
-           //                          c.Name,
-           //                      } into cl
-           //                      let summ = cl.Sum(x => x.SumOrders)
-           //                      select new 
-           //                      {
-           //                          cl = cl.Key,
-           //                          summ = summ 
-           //                      }
-           //                ).ToList();
+           StoreContext db = new StoreContext();
 
+           IEnumerable <ClientModel> clients = (from c in db.Clients
+                       join o in db.Orders on c.ClientId equals o.ClientId
+                       join or in db.OrderRows on o.OrderId equals or.OrderRowId
+                       group or by new {
+                           c.ClientId,
+                           c.Name,
+                           c.Adress,
+                       } into clts
+                       let sumBycl = clts.Sum(x => x.Sum)
+                       select new ClientModel
+                       {
+                            ClientId = clts.Key.ClientId,
+                            Name = clts.Key.Name,
+                            Adress = clts.Key.Adress,
+                            SumOrders = sumBycl 
+                       }                                   
+                       ).ToList();
+            //DataView view = new DataView(db.Clients);3
             ViewBag.Clients = clients;
             return View();
         }
+
         public ActionResult Orders()
         {
             return View();
