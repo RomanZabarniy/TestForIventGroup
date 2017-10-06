@@ -9,7 +9,7 @@ namespace WebApplicationTest_IG.Models
         //[Key]
         public int OrderId { get; set; }
         public int ClientId { get; set; }
-       // [Column("Date",TypeName = "datetimee2")]
+       // [Column("Date",TypeName = "datetime2")]
         public DateTime Date { get; set; }
     }
 }

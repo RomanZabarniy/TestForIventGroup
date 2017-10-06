@@ -155,8 +155,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\DBProvider\DBProvider.cs" />
+    <Compile Include="Models\HelperClasses\JsonResponseInfo.cs" />
+    <Compile Include="Models\OrderForTable.cs" />
     <Compile Include="Models\ClientModel.cs" />
     <Compile Include="Models\DbContext\StoreDbInitializer.cs" />
+    <Compile Include="Models\DetailOrder.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderRow.cs" />
     <Compile Include="Models\Product.cs" />
@@ -165,6 +169,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\294.gif" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -187,6 +192,7 @@
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\detailOrder.js" />
     <Content Include="Scripts\jquery-3.2.1.js" />
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\jquery-3.2.1.slim.js" />
@@ -201,6 +207,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Share.js" />
     <Content Include="Scripts\SQL_Scrips\dbo.Procedure.sql" />
     <Content Include="Scripts\SQL_Scrips\dbo.ProcedureCreateAndInitAllDB.sql" />
     <Content Include="Scripts\SQL_Scrips\TriggerDeleted.sql" />
@@ -225,7 +232,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\SQL_Scripts\" />
-    <Folder Include="Models\DBProvider\" />
+    <Folder Include="Views\Order\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

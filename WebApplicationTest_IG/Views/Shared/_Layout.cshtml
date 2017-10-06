@@ -7,6 +7,8 @@
     <title>@ViewBag.Title – приложение ASP.NET</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -22,7 +24,6 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Клиенты", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Заказы", "Orders", "Home")</li>
                     <li>@Html.ActionLink("Статистика", "Statistic", "Home")</li>
                     <li>@Html.ActionLink("Задание", "About", "Home")</li>
                     <li>@Html.ActionLink("Контакт", "Contact", "Home")</li>

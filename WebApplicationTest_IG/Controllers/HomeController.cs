@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebApplicationTest_IG.Models;
+using WebApplicationTest_IG.Models.HelperClasses;
+using WebApplicationTest_IG.Models.DBProvider;
 
 namespace WebApplicationTest_IG.Controllers
 {
@@ -13,70 +16,61 @@ namespace WebApplicationTest_IG.Controllers
 
         public ActionResult Index()
         {
-           StoreContext db = new StoreContext();
-
-           // собираем список клиентов для первой страницы
-           IEnumerable <ClientModel> clients = (from c in db.Clients
-                       join o in db.Orders on c.ClientId equals o.ClientId
-                       join or in db.OrderRows on o.OrderId equals or.OrderRowId
-                       group or by new {
-                           c.ClientId,
-                           c.Name,
-                           c.Adress,
-                       } into clts
-                       let sumBycl = Math.Round(clts.Sum(x => x.Sum),2)
-                       select new ClientModel
-                       {
-                            ClientId = clts.Key.ClientId,
-                            Name = clts.Key.Name,
-                            Adress = clts.Key.Adress,
-                            SumOrders = sumBycl 
-                       }                                   
-                       ).ToList();
-            ViewBag.Clients = clients;
+            ViewBag.Clients = DBProvider.GetAllClients();
             return View();
         }
+        
 
-        public ActionResult Orders()
+        public ActionResult Orders(int id)
         {
+            ViewBag.Client = DBProvider.GetClientById(id);
             return View();
         }
+
+
         public ActionResult Statistic()
         {
-            StoreContext db = new StoreContext();
-            
-            
-            IEnumerable<StatisticModel> stat = (from c in db.Clients
-                                                join o in db.Orders on c.ClientId equals o.ClientId
-                                                join or in db.OrderRows on o.OrderId equals or.OrderRowId
-                                                group or by new {
-                                                    c.Category,
-                                                    clQant = db.Clients.Where(x => x.Category == c.Category ).Count() 
-                                                }  into cat
-                                                let sumByCat = Math.Round(cat.Sum(x => x.Sum),2)
-                                                orderby sumByCat
-                                                select new StatisticModel {
-                                                   Category = cat.Key.Category,
-                                                   SumByClientOrders = sumByCat,
-                                                   ClientsByCatQuantity =  cat.Key.clQant
-                                               }
-                                                ).ToList();
-            ViewBag.StatByCategories = stat;
+            ViewBag.StatByCategories = DBProvider.GetStitistic(); ;
             return View();
         }
+
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
+
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
-
             return View();
+        }
+
+
+        [HttpPost]
+        public JsonResult OrderList(string data)
+        {
+            int id = Convert.ToInt32(data);
+            JsonResponseInfo res = new JsonResponseInfo
+            {
+                BodyHtml = JsonConvert.SerializeObject(DBProvider.OrdersByID(id)),
+                Message = "",
+                Code = "200"
+            };
+            return Json(res);
+        }
+
+        [HttpPost]
+        public JsonResult DetailOrderList(string data)
+        {
+            int id = Convert.ToInt32(data);
+            JsonResponseInfo res = new JsonResponseInfo
+            {
+                BodyHtml = JsonConvert.SerializeObject(DBProvider.DetailOrdersByID(id)),
+                Message = "",
+                Code = "200"
+            };
+            return Json(res);
         }
     }
 }

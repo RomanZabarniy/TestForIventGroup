@@ -1,7 +1,46 @@
-﻿
+﻿<script src="~/Scripts/Share.js" onload="InitCurrentClient('@ViewBag.Client.ClientId')"></script>
+<script src="~/Scripts/detailOrder.js"></script>
+
 @{
     ViewBag.Title = "Заказы";
 }
 
-<h2>Заказы</h2>
+<h4><span>Заказы </span><span>@ViewBag.Client.Name:</span> </h4>
+<div>
+    <div id="loadPict" class="col-md-offset-4">
+        <img style="position:page" src="~/Content/294.gif" />
+    </div>
+</div>
 
+<div class="dataContainer data"></div>
+
+@*<table class="table table-responsive table-hover">
+    
+    <thead>
+        <tr><th>Column</th><th>Column</th><th>Column</th><th>Column</th></tr>
+    </thead>
+
+    <tbody>
+        @foreach (var с in ViewBag.Orders)
+        {
+            <tr class="clickable" data-toggle="collapse" id="row1" data-target=".row1">
+                <td><i class="glyphicon glyphicon-plus"></i></td>
+                <td>c.OrderDate</td>
+                <td>data</td>
+                <td>data</td>
+            </tr>
+            <tr class="collapse row1">
+                <td>- child row</td>
+                <td>data</td>
+                <td>data</td>
+                <td>data</td>
+            </tr>
+            <tr class="collapse row1">
+                <td>- child row</td>
+                <td>data</td>
+                <td>data</td>
+                <td>data</td>
+            </tr>
+        }
+    </tbody>
+</table>*@
