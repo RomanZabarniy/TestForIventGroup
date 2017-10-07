@@ -11,18 +11,17 @@
         <img style="position:page" src="~/Content/294.gif" />
     </div>
 </div>
+<div id ="tableContainer" class="dataContainer data"></div>
 
-<div class="dataContainer data"></div>
 
-@*<table class="table table-responsive table-hover">
+<table class="table table-responsive table-hover">
     
-    <thead>
+    @*<thead>
         <tr><th>Column</th><th>Column</th><th>Column</th><th>Column</th></tr>
-    </thead>
+    </thead>*@
 
     <tbody>
-        @foreach (var с in ViewBag.Orders)
-        {
+      
             <tr class="clickable" data-toggle="collapse" id="row1" data-target=".row1">
                 <td><i class="glyphicon glyphicon-plus"></i></td>
                 <td>c.OrderDate</td>
@@ -41,6 +40,26 @@
                 <td>data</td>
                 <td>data</td>
             </tr>
-        }
+
+
+            <tr class="clickable" data-toggle="collapse" id="row2" data-target=".row2">
+                <td><i class="glyphicon glyphicon-plus"></i></td>
+                <td>data</td>
+                <td>data</td>
+                <td>data</td>
+            </tr>
+            <tr class="collapse row2">
+                <td>- child row</td>
+                <td>data 2</td>
+                <td>data 2</td>
+                <td>data 2</td>
+            </tr>
+            <tr class="collapse row2">
+                <td>- child row</td>
+                <td>data 2</td>
+                <td>data 2</td>
+                <td>data 2</td>
+            </tr>
+       
     </tbody>
-</table>*@
+</table>

@@ -1,153 +1,75 @@
 ﻿$(document).ready(function () {
-
-    var ordersList;
-    var ordersListDetails = [];
+   
     showIndicator(true);
 
     if (COURENT_CLIENT_ID !== '') {
         GetDataFromServer("OrderList", COURENT_CLIENT_ID);
-        GetDataFromServer("DetailOrderList", COURENT_CLIENT_ID);   
+        GetDataFromServer("DetailOrderList", COURENT_CLIENT_ID); 
+        var tableData = {
+            parentRows: getDataFromStorage("OrderList"),
+            childRows: getDataFromStorage("DetailOrderList")
+        };
+        CreateDoubleTable(tableData);
     }
     showIndicator(false);
-   
 });
 
+function CreateDoubleTable(data) {
+    var j = 10;
+    var pRow = data.parentRows;
+    let headerTitles = ["", "№ Операции", "Дата", "Сумма"];
 
+    // создаем начальную сруктуру таблицы
+    let table = document.createElement('table'),
+        thead = document.createElement('thead'),
+        tr = document.createElement('tr');
 
-var defaultOrder = {
-    OrderId: null,
-    OrderDate: null,
-    //ClientID,
-    TableProduct: []
-};
+    table.className = "table table-responsive table-hover";
 
-
-
-
-
-
-
-
-
-/*
-class Table {
-    constructor(config) {
-        this.config = config;
-        this.currentPage = 1;
-        this.init();
+    // генерируем заголовок таблицы
+    for (let item of headerTitles ) {
+        let th = document.createElement('th');
+        //td.setAttribute('data-field', item.field);
+        th.innerHTML = item;
+        tr.appendChild(th);
     }
-    splitByPages(data) {
-        let headers = data.shift(), //заголовок таблицы (id == Идентификатор и.т.д)
-            container = document.querySelector(this.config.output.container), // сюда помещаются все данные
-            pages = [], // матрица страниц
-            numPages = Math.ceil(data.length / this.config.perPage); // подсчет кол-ва необходимых страниц
 
-        // разбиваем все данные по страницам.
-        // массив имеет следующий вид: pages[номер страницы] === [[], [], [].....]
+    thead.appendChild(tr);
+    table.appendChild(thead);
 
-        for (let i = 0; i < numPages; i++) {
-            pages[i] = [];
-            for (let j = 0; j < this.config.perPage; j++) {
-                if (data.length === 0) break;
-                pages[i].push(data.shift());
-            }
-        }
+    // генерируем и заполняем тело таблицы
+    tbody = document.createElement('tbody');
+   
+    for (var i = 0; i < pRow.length; i++) {
+        let tr = document.createElement('tr');
+        tr.className = 'clickable';
+        tr.setAttribute('data-toggle', "collapse");
+        tr.setAttribute('data-target', ".row" + (i + 1).toString());
+        tr.id = "row" + (i + 1).toString();
 
-        // записываем информацию о сраницах в localStorage
-        localStorage.setItem("pages", JSON.stringify(pages));
+        let td = document.createElement('td');
+        td.innerHTML = " ";
+        tr.appendChild(td);
 
-        // создаем начальную сруктуру таблицы
-        let table = document.createElement('table'),
-            thead = document.createElement('thead'),
-            tr = document.createElement('tr');
+         td = document.createElement('td');
+         td.innerHTML = pRow[i].OrderId;
+        tr.appendChild(td);
 
-        // генерируем заголовок таблицы
-        for (let item of headers) {
-            let td = document.createElement('td');
-            td.setAttribute('data-field', item.field);
-            td.innerHTML = item.title;
-            tr.appendChild(td);
-        }
-
-        thead.appendChild(tr);
-        table.appendChild(thead);
-
-        container.appendChild(table);
+         td = document.createElement('td');
+         td.innerHTML = pRow[i].Date;
+         tr.appendChild(td);
+        
+         td = document.createElement('td');
+         td.innerHTML = pRow[i].SumByOrder;
+         tr.appendChild(td);
+        
+        tbody.appendChild(tr);
     }
-    // переключение между страницами (т.е генерация таблицы на основе массива pages из localStorage)
-    switchPage() {
-        // если данных в localStorage по какой-то причине нет, то останавливаем работу метода.
-        if (!localStorage.getItem('pages')) return;
+    table.appendChild(tbody);
 
-        let table = document.querySelector(this.config.output.container + ' table'), // таблица
-            pages = JSON.parse(localStorage.getItem('pages')), // массив со страницами
-            tbody = document.querySelector(this.config.output.container + ' table tbody'); // элемент tbody в таблице
 
-        // если tbody не найден, то создаем его. В обратном случае обнуляем.
-        if (!tbody) {
-            tbody = document.createElement('tbody');
-        }
-        else {
-            tbody.innerHTML = '';
-        }
-
-        // генерируем содержимое элемента tbody
-        pages[this.currentPage - 1].forEach((row) => {
-            let tr = document.createElement('tr');
-
-            row.forEach((cell) => {
-                let td = document.createElement('td');
-                td.innerHTML = cell;
-                tr.appendChild(td);
-            });
-
-            tbody.appendChild(tr);
-        });
-        table.appendChild(tbody);
-    }
-    pagination() {
-        // если данных в localStorage по какой-то причине нет, то останавливаем работу метода.
-        if (!localStorage.getItem('pages')) return;
-
-        let numPages = JSON.parse(localStorage.getItem('pages')).length, // кол-во страниц
-            container = document.querySelector(this.config.output.container), // сюда помещаются все данные
-            items = document.createElement('ul'); // контейнер пунктов меню
-
-        // генерируем необходимое кол-во элементов.
-        for (let i = 0; i < numPages; i++) {
-            let item = document.createElement('li');
-            item.innerHTML = i + 1;
-            items.appendChild(item);
-        }
-
-        // вешаем обработчик клика на элементы пагинации
-        items.addEventListener('click', (e) => {
-            if (e.target.tagName !== 'LI') return false;
-
-            this.currentPage = +e.target.innerHTML; // обновляем текущую страницу
-            this.switchPage(); // перерисовываем таблицу (tbody)
-        });
-
-        // добавляем пагинацию в контейнер
-        container.appendChild(items);
-    }
-    init() {
-        // запрос к серверу
-        fetch(this.config.url)
-            .then((response) => {
-                if (response.status !== 200) {
-                    console.error('Something went wrong, response status: ' + response.status);
-                    return;
-                }
-                response.json().then((response) => {
-                    this.splitByPages(response); // разделяем данные по страницам
-                    this.switchPage(); // так как изначально this.currentPage = 1, то отрисовываем первую страницу
-                    this.pagination(); // генерируем пагинацию.
-                });
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }
+    var container = document.querySelector("#tableContainer");
+   
+    container.appendChild(table);
 }
-*/
+

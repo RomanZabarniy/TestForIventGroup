@@ -40,7 +40,7 @@ p {
 .counter td,
 .counter tr:before {
     padding: .1em .5em;
-    border: 1px solid rgba(166, 183, 182, 0.50);
+    border: 1px solid RGBA(166, 183, 182, 0.50);
 }
 
 .counter tr:before {

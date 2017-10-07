@@ -30,7 +30,7 @@ namespace WebApplicationTest_IG.Controllers
 
         public ActionResult Statistic()
         {
-            ViewBag.StatByCategories = DBProvider.GetStitistic(); ;
+            ViewBag.StatByCategories = DBProvider.GetStatistic(); ;
             return View();
         }
 

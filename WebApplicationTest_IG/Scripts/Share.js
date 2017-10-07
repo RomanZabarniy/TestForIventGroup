@@ -53,3 +53,17 @@ function GetDataFromServer(methodName, data) {
         accept: 'application/json'
     });
 }
+
+function getDataFromStorage(key) {
+    var data = null;
+    if (localStorage[key] !== null) {
+        try {
+            data = JSON.parse(localStorage[key]);
+        }
+        catch (e) {
+            data = null;
+        }
+
+    }
+    return data;
+}

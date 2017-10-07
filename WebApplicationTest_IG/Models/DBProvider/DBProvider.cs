@@ -46,16 +46,15 @@ namespace WebApplicationTest_IG.Models.DBProvider
                  orderby ordl.Key.OrderID
                  select new OrderForTable
                  {
-                     ClientId = id,
                      OrderId = ordl.Key.OrderID,
-                     SumByOrder = allSum,
-                     Date = ordl.Key.OrderDate
+                     Date = ordl.Key.OrderDate,
+                     SumByOrder = allSum
                  }).ToList();
 
             return result;
         }
 
-        public static IEnumerable <StatisticModel> GetStitistic()
+        public static IEnumerable <StatisticModel> GetStatistic()
         {
             StoreContext db = new StoreContext();
             //Статистика
