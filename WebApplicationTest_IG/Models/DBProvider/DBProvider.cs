@@ -58,24 +58,35 @@ namespace WebApplicationTest_IG.Models.DBProvider
         {
             StoreContext db = new StoreContext();
             //Статистика
+
             IEnumerable<StatisticModel> stat =
-                (from c in db.Clients
-                 join o in db.Orders on c.ClientId equals o.ClientId
-                 join or in db.OrderRows on o.OrderId equals or.OrderRowId
-                 group or by new
-                 {
-                     c.Category,
-                     clQant = db.Clients.Where(x => x.Category == c.Category).Count()
-                 } into cat
-                 let sumByCat = Math.Round(cat.Sum(x => x.Sum), 2)
-                 orderby sumByCat
-                 select new StatisticModel
-                 {
-                     Category = cat.Key.Category,
-                     SumByClientOrders = sumByCat,
-                     ClientsByCatQuantity = cat.Key.clQant
-                 }
-                  ).ToList();
+                  (from cls in
+                          (from c in db.Clients
+                           join o in
+                                 (from o in db.Orders
+                                  join or in db.OrderRows on o.OrderId equals or.OrderId into orSum
+                                  select new
+                                  {
+                                      ClientId = o.ClientId,
+                                      OrderSum = orSum.Sum(s => s.Sum)
+                                  })
+                           on c.ClientId equals o.ClientId into cl
+                           select new
+                           {
+                               category = c.Category,
+                               SumOrders = cl.Sum(x => x.OrderSum),
+                               ClientId = c.ClientId
+                           })                                              
+                   group cls by new {
+                       cls.category
+                   } into cs
+                   let sumByCat = cs.Sum(s => s.SumOrders)
+                   let csQuantity = cs.Count()
+                   select new StatisticModel {
+                       Category = cs.Key.category,
+                       SumByClientOrders = sumByCat,
+                       ClientsByCatQuantity = csQuantity
+               }).OrderBy(x=>x.SumByClientOrders).ToList();
             return stat;
         }
 
@@ -84,25 +95,25 @@ namespace WebApplicationTest_IG.Models.DBProvider
             StoreContext db = new StoreContext();
 
             // Собираем список клиентов для первой страницы
-            IEnumerable<ClientModel> result =
-                       (from c in db.Clients
-                        join o in db.Orders on c.ClientId equals o.ClientId
-                        join or in db.OrderRows on o.OrderId equals or.OrderRowId
-                        group or by new
-                        {
-                            c.ClientId,
-                            c.Name,
-                            c.Adress,
-                        } into clts
-                        let sumBycl = Math.Round(clts.Sum(x => x.Sum), 2)
-                        select new ClientModel
-                        {
-                            ClientId = clts.Key.ClientId,
-                            Name = clts.Key.Name,
-                            Adress = clts.Key.Adress,
-                            SumOrders = sumBycl
-                        }
-                        ).ToList();
+
+            IEnumerable<ClientModel> result = 
+                          (from c in db.Clients
+                          join o in
+                                (from o in db.Orders
+                                 join or in db.OrderRows on o.OrderId equals or.OrderId into orSum
+                                 select new
+                                 {
+                                     ClientId = o.ClientId,
+                                     OrderSum = orSum.Sum(s => s.Sum)
+                                 })
+                          on c.ClientId equals o.ClientId into cl
+                          select new ClientModel {
+                              ClientId = c.ClientId,
+                              Name = c.Name,
+                              Adress = c.Adress,
+                              SumOrders = cl.Sum(x => x.OrderSum )
+                          }).ToList();
+            
             return result;
         }
 
